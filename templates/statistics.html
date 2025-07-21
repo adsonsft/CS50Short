@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+
+{% block title %}
+My links
+{% endblock %}
+
+{% block main %}
+
+{% if links %}
+<h2 class="mb-5">My links</h2>
+<div class="table-responsive">
+  <table class="table table-sm" style="width: fit-content; margin: 0 auto;">
+    <thead class="table-light">
+      <tr>
+        <th>Description</th>
+        <th>Clicks</th>
+        <th>Created at</th>
+      </tr>
+    </thead>
+    <tbody class="table-group-divider">
+      {% for l in links %}
+      <tr>
+        <td>
+          {% if l.description == None %}
+          <a class="link-success link-underline-opacity-0 cursor-pointer"
+            id="{{ l.id }}"
+            data-bs-toggle="modal"
+            data-bs-target="#alter-description"
+            data-link="description"
+            style="cursor: pointer"
+          >Add description</a>
+          {% else %}
+          {{ l.description }}
+          {% endif %}
+        </td>
+
+        <td>
+          {% if l.clicks == None %}
+          0
+          {% else %}
+          {{ l.clicks }}
+          {% endif %}
+        </td>
+
+        <td class="created-at" data-time="{{ l.created_at }}"></td>
+        <td><a class="link-primary link-underline-opacity-0" style="cursor: pointer" href="/statistics/{{ l.s_url }}">Show details</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+</div>
+
+<!-- Vertically centered modal -->
+<div class="modal" tabindex="-1" id="alter-description">
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Change description</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+      <form action="/short" method="POST" id="alter-description-form">
+        <input type="hidden" name="link_id" id="link-id">
+        <input type="text" class="form-control" name="description" id="description" autocomplete="off" placeholder="Description">
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="submit" form="alter-description-form" class="btn btn-primary">Save changes</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  // Get all created_at timestamps of links
+  const createdAt = document.querySelectorAll(".created-at")
+
+  // Calculate the difference of the time between
+  // the creation date and now
+  createdAt.forEach((item) => {
+    date = Date.parse(item.getAttribute("data-time") + "Z")
+    now = Date.now()
+    dif = Math.floor((now - date) / 1000)
+
+    if (dif < 60)
+    {
+      item.innerHTML = "Just now" 
+    }
+    else if (dif < 3600)
+    {
+      item.innerHTML = `${Math.floor(dif / 60)}m ago`
+    }
+    else if (dif < (3600 * 24))
+    {
+      item.innerHTML = `${Math.floor(dif / 3600)}h ago`
+    }
+    else if (dif < (3600 * 24 * 7))
+    {
+      item.innerHTML = `${Math.floor(dif / (3600 * 24))}d ago`
+    }
+    else if (dif < (3600 * 24 * 30))
+    {
+      item.innerHTML = `${Math.floor(dif / (3600 * 24 * 7))}w ago`
+    }
+    else if (dif < (3600 * 24 * 365))
+    {
+      item.innerHTML = `${Math.floor(dif / (3600 * 24 * 30))}m ago`
+    }
+    else {
+      item.innerHTML = `${Math.floor(dif / (3600 * 24 * 365))}y ago`
+    }
+  })
+
+  // Get the modal
+  const myModal = document.getElementById('alter-description')
+  const myInput = document.getElementById('description')
+
+  myModal.addEventListener('shown.bs.modal', () => {
+    myInput.focus()
+  })
+
+  // Get the empty descriptions
+  const linksDescription = document.querySelectorAll('[data-link="description"]')
+
+  // Add the link id in the modal
+  function changeInputValue(e) {
+    modalInput = document.querySelector("#link-id").value = e.target.getAttribute("id") 
+  }
+
+  // Add event to empty descriptions
+  linksDescription.forEach((item) => {
+    item.addEventListener("click", changeInputValue)
+  })
+</script>
+{% endblock %}

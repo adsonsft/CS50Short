@@ -1,0 +1,227 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Details: {{ data.description }}
+{% endblock %}
+
+{% block main %}
+<h2 class="mb-5">Details from <span class="badge text-bg-primary">{{ data.description }}</span></h2>
+
+<div class="d-flex align-items-center justify-content-between mb-5">
+  <div>
+    <a style="max-width: 30ch" class="d-block link-primary link-underline-opacity-0 text-start text-truncate" href="{{ data.f_url }}" target="_blank">{{ data.f_url }}</a>
+    <a style="max-width: 30ch" class="d-block link-primary link-underline-opacity-0 text-start text-truncate" href="/{{ data.s_url }}" target="_blank">CS50short/{{ data.s_url }}</a>
+  </div>
+  <div class="d-flex flex-column align-items-center justify-content-center bg-light rounded-3 px-4 py-2">
+    <span class="fs-1 fw-bold lh-1">{{ data.clicks }}</span>
+    <span>
+      {% if data.clicks == 1 %}
+      click
+      {% else %}
+      clicks
+      {% endif %}
+    </span>
+  </div>
+</div>
+
+<div class="charts-layout">
+  <div class="devices d-flex flex-column align-items-start border border-light-subtle rounded-3 p-3">
+    <h3 class="text-start">Devices</h3>
+    <div style="height: 270px">
+      <canvas style="height: 100% !important" id="devices"></canvas>
+    </div>
+  </div>
+
+  <div class="clicks d-flex flex-column align-items-start border border-light-subtle rounded-3 p-3">
+    <h3 class="text-start d-flex align-items-center gap-2">Clicks per day <span class="top5-badge badge text-bg-primary">LAST 10 DAYS</span></h3>
+    <div style="height: 270px">
+      <canvas style="height: 100% !important" id="clicks"></canvas>
+    </div>
+  </div>
+
+  <div class="browsers d-flex flex-column align-items-center border border-light-subtle rounded-3 p-3">
+    <h3 class="w-100 text-start d-flex align-items-center gap-2">Browsers <span class="top5-badge badge text-bg-primary">TOP 5</span></h3>
+    <div>
+      <canvas style="height: 100% !important" id="browsers"></canvas>
+    </div>
+  </div>
+
+  <div class="os d-flex flex-column align-items-center border border-light-subtle rounded-3 p-3">
+    <h3 class="w-100 text-start d-flex align-items-center gap-2">Operational Systems <span class="top5-badge badge text-bg-primary">TOP 5</span></h3>
+    <div>
+      <canvas style="height: 100% !important" id="os"></canvas>
+    </div>
+  </div>
+
+  <div class="referers d-flex flex-column border border-light-subtle rounded-3 p-3">
+    <h3 class="w-100 text-start d-flex align-items-center gap-2">Referers <span class="top5-badge badge text-bg-primary">TOP 5</span></h3>
+    <div>
+      <canvas style="height: 100%; width: max-content;" id="referers"></canvas>
+    </div>
+  </div>
+
+  <div class="cities d-flex flex-column align-items-start border border-light-subtle rounded-3 p-3">
+    <h3 class="text-start d-flex align-items-center gap-2">Cities <span class="top5-badge badge text-bg-primary">TOP 5</span></h3>
+    <div style="height: 270px">
+      <canvas style="height: 100% !important" id="cities"></canvas>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const devices = document.getElementById('devices');
+    const clicksPerDay = document.getElementById('clicks')
+    const browsers = document.getElementById('browsers')
+    const os = document.getElementById('os')
+    const referers = document.getElementById('referers')
+    const cities = document.getElementById('cities')
+
+    {% if data.devices %}
+    // Devices
+    new Chart(devices, {
+      type: 'pie',
+      data: {
+        labels: {{data.devices.keys() | list | tojson}},
+        datasets: [{
+          label: '# of devices',
+          data: {{data.devices.values() | list | tojson}},
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+          },
+        },
+      }
+    });
+    {% endif %}
+
+    {% if data.clicks_per_day %}
+    // Clicks per day
+    new Chart(clicksPerDay, {
+      type: 'bar',
+      data: {
+        labels: {{data.clicks_per_day.keys() | list | tojson}},
+        datasets: [{
+          label: 'clicks',
+          data: {{data.clicks_per_day.values() | list | tojson}},
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+          },
+        },
+      }
+    });
+    {% endif %}
+
+    {% if data.browsers %}
+    // Browsers
+    new Chart(browsers, {
+      type: 'pie',
+      data: {
+        labels: {{data.browsers.keys() | list | tojson}},
+        datasets: [{
+          label: '# access by the browser',
+          data: {{data.browsers.values() | list | tojson}},
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+          },
+        },
+      }
+    });
+    {% endif %}
+
+    {% if data.os %}
+    // Operational systems
+    new Chart(os, {
+      type: 'pie',
+      data: {
+        labels: {{data.os.keys() | list | tojson}},
+        datasets: [{
+          label: '# access by os',
+          data: {{data.os.values() | list | tojson}},
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+          },
+        },
+      }
+    });
+    {% endif %}
+ 
+    {% if data.referers %}
+    // Referers
+    new Chart(referers, {
+      type: 'pie',
+      data: {
+        labels: {{data.referers.keys() | list | tojson}},
+        datasets: [{
+          label: '# access by referer',
+          data: {{data.referers.values() | list | tojson}},
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+          },
+        },
+      }
+    });
+    {% endif %}
+
+    {% if data.cities %}
+    // Cities
+    new Chart(cities, {
+      type: 'bar',
+      data: {
+        labels: {{data.cities.keys() | list | tojson}},
+        datasets: [{
+          label: 'clicks',
+          data: {{data.cities.values() | list | tojson}},
+          borderWidth: 1
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+        },
+      }
+    });
+    {% endif %}
+ </script>
+{% endblock %}

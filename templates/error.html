@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ error.title }}
+{% endblock %}
+
+{% block main %}
+    <div class="h-vh d-flex align-items-center justify-content-center">
+      <div class="alert alert-danger" role="alert">
+        {{ error.message }}
+      </div>
+    </div>
+{% endblock %}
