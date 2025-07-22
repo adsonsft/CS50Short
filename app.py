@@ -336,7 +336,7 @@ def short():
                 )
 
     # Generate the short url
-    s_url = generate_short_url(f_url)
+    s_url = generate_short_url()
 
     # Try to insert in database
     try:
