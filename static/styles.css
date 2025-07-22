@@ -29,7 +29,7 @@ table, th, td {
 .charts-layout {
   display: grid;
   grid-template-columns: repeat(6, 1fr); 
-  grid-template-rows: repeat(3, auto);
+  grid-template-rows: 320px 250px 320px;
   gap: 16px;
 }
 
@@ -37,6 +37,17 @@ table, th, td {
   font-size: 14px;
 }
 
+.devices,
+.clicks,
+.browsers, 
+.os,
+.referers,
+.cities {
+  .canvas-container {
+    width: 100%;
+    height: 100%;
+  }
+}
 .devices {
   grid-column: 1/4;
 }
@@ -54,4 +65,56 @@ table, th, td {
 }
 .cities {
   grid-column: 2/6;
+}
+
+@media(max-width: 1399px) {
+  .charts-layout {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .devices {
+    grid-column: 1/2;
+  }
+  .clicks {
+    grid-column: 2/3;
+  }
+  .browsers {
+    grid-column: 1/2;
+  }
+  .os {
+    grid-column: 2/3;
+  }
+  .referers {
+    grid-column: 1/2;
+  }
+  .cities {
+    grid-column: 2/2;
+  }
+}
+
+@media(max-width: 1199px){
+  .charts-layout {
+    grid-template-rows: 280px 250px 280px;
+  }
+}
+
+@media(max-width: 991px) {
+  .charts-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(6, 280px);
+    justify-items: center;
+  }
+  .devices,
+  .clicks,
+  .browsers,
+  .os,
+  .referers,
+  .cities {
+    grid-column: 1;
+  }
+}
+
+@media(max-width: 575px) {
+  .charts-layout {
+    grid-template-rows: repeat(6, minmax(200px, auto));
+  }
 }
