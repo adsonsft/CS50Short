@@ -1,5 +1,5 @@
 # CS50Short
-#### Video Demo: link_to_the_video
+#### Video Demo: https://youtu.be/XtgZmoRJVXw
 #### Description: A simple application to shorten long URLs into short ones.
 
 ## Overview
